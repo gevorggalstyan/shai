@@ -24,28 +24,23 @@ A ZSH plugin that adds an AI-powered chat mode to your terminal. Toggle between 
 
 - **ZSH** (5.0+)
 - **[OpenCode](https://github.com/opencode-ai/opencode)** - AI backend server
-- **jq** - JSON processor
+- **jq** - JSON processor (preinstalled on macOS 15+)
 
 ## Installation
 
 ### Dependencies
 
 ```bash
-# Install OpenCode
+# Install OpenCode (Homebrew works on macOS and Linux)
 brew install opencode
 
-# Install jq
-# macOS
+# Install jq (preinstalled on macOS 15+)
 brew install jq
 
-# Debian/Ubuntu
-sudo apt install jq
-
-# Fedora
-sudo dnf install jq
-
-# Arch
-sudo pacman -S jq
+# Or use your system package manager
+sudo apt install jq      # Debian/Ubuntu
+sudo dnf install jq      # Fedora
+sudo pacman -S jq        # Arch
 ```
 
 ### Plugin Installation
