@@ -57,7 +57,7 @@ sudo pacman -S jq
 git clone https://github.com/gevorggalstyan/shai.git ~/.zsh/shai
 
 # Add to your .zshrc
-echo 'source ~/.zsh/shai/shai.zsh' >> ~/.zshrc
+echo 'source ~/.zsh/shai/shai.plugin.zsh' >> ~/.zshrc
 
 # Reload
 source ~/.zshrc
@@ -140,7 +140,7 @@ typeset -gA SHAI_MODEL_SHORT_NAMES=(
   "gemini-2.5-pro" "gem2.5"
 )
 
-source ~/.zsh/shai/shai.zsh
+source ~/.zsh/shai/shai.plugin.zsh
 ```
 
 ### Environment Variables
