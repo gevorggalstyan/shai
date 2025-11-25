@@ -22,7 +22,7 @@ A ZSH plugin that adds an AI-powered chat mode to your terminal. Toggle between 
 
 ```bash
 # Install OpenCode
-npm install -g opencode-ai
+brew install opencode
 
 # Install jq
 # macOS
@@ -117,15 +117,17 @@ Set your preferred models before sourcing the plugin:
 typeset -ga SHAI_MODEL_CHOICES=(
   "anthropic:claude-sonnet-4-5"
   "anthropic:claude-opus-4-5"
-  "openai:gpt-4o"
-  "openai:gpt-4o-mini"
+  "openai:gpt-5.1"
+  "openai:gpt-5.1-codex"
+  "google:gemini-2.5-pro"
 )
 
 typeset -gA SHAI_MODEL_SHORT_NAMES=(
-  "claude-sonnet-4-5" "sonnet"
-  "claude-opus-4-5" "opus"
-  "gpt-4o" "gpt4o"
-  "gpt-4o-mini" "mini"
+  "claude-sonnet-4-5" "son4.5"
+  "claude-opus-4-5" "opus4.5"
+  "gpt-5.1" "gpt5.1"
+  "gpt-5.1-codex" "cdx5.1"
+  "gemini-2.5-pro" "gem2.5"
 )
 
 source ~/.zsh/shai/shai.zsh
