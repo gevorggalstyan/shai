@@ -1,3 +1,13 @@
+```
+  ███████╗██╗  ██╗ █████╗ ██╗
+  ██╔════╝██║  ██║██╔══██╗██║
+  ███████╗███████║███████║██║
+  ╚════██║██╔══██║██╔══██║██║
+  ███████║██║  ██║██║  ██║██║
+  ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝
+     ★ Shell AI Assistant ★
+```
+
 # SHAI - Shell AI
 
 A ZSH plugin that adds an AI-powered chat mode to your terminal. Toggle between normal shell mode and AI mode with a single keystroke.
