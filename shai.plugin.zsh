@@ -16,6 +16,37 @@
 #   - jq: brew install jq (macOS) / apt install jq (Debian)
 
 # =============================================================================
+# MODEL CONFIGURATION - Edit this section to customize your models
+# =============================================================================
+# Format: "provider:model-id:shortname"
+#
+# - provider:  anthropic, openai, google, etc.
+# - model-id:  the model identifier for that provider
+# - shortname: displayed in your prompt (e.g., "★ son4.5 ~ %") - can be anything you like
+#
+# Browse available models at https://models.dev
+# Models must also be supported by OpenCode: https://github.com/opencode-ai/opencode
+
+typeset -ga SHAI_MODELS=(
+  "anthropic:claude-sonnet-4-5:son4.5"
+  "anthropic:claude-opus-4-5:opus4.5"
+  "openai:gpt-5.1:gpt5.1"
+  "openai:gpt-5.1-codex:cdx5.1"
+  "google:gemini-2.5-pro:gem2.5"
+)
+
+# =============================================================================
+# END OF MODEL CONFIGURATION - No need to edit below this line
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Helper functions to parse model entries
+# -----------------------------------------------------------------------------
+shai-get-provider()  { local IFS=':'; local parts=(${=SHAI_MODELS[$1]}); echo "$parts[1]"; }
+shai-get-model()     { local IFS=':'; local parts=(${=SHAI_MODELS[$1]}); echo "$parts[2]"; }
+shai-get-shortname() { local IFS=':'; local parts=(${=SHAI_MODELS[$1]}); echo "$parts[3]"; }
+
+# =============================================================================
 # MODE STATE
 # =============================================================================
 # Track current mode (shell or ai) and related state variables
@@ -31,36 +62,6 @@ typeset -gA SHAI_SAVED_HIGHLIGHT_STYLES            # Backup of ZSH_HIGHLIGHT_STY
 typeset -g SHAI_SAVED_AUTOSUGGEST_STYLE=""         # Backup of autosuggest style
 typeset -g SHAI_AUTOSUGGEST_SUSPENDED=0            # Whether autosuggest is suspended
 
-# =============================================================================
-# MODEL CONFIGURATION
-# =============================================================================
-# Available models and their display names. Can be overridden before sourcing.
-#
-# To customize, add this to ~/.zshrc BEFORE sourcing shai.zsh:
-#   typeset -ga SHAI_MODEL_CHOICES=("provider:model-id" ...)
-#   typeset -gA SHAI_MODEL_SHORT_NAMES=("model-id" "display-name" ...)
-
-if (( ! ${+SHAI_MODEL_CHOICES} )); then
-  typeset -ga SHAI_MODEL_CHOICES=(
-    "anthropic:claude-sonnet-4-5"
-    "anthropic:claude-opus-4-5"
-    "openai:gpt-5.1"
-    "openai:gpt-5.1-codex"
-    "google:gemini-2.5-pro"
-  )
-fi
-
-# Short names shown in the prompt (e.g., "son4.5" instead of "claude-sonnet-4-5")
-if (( ! ${+SHAI_MODEL_SHORT_NAMES} )); then
-  typeset -gA SHAI_MODEL_SHORT_NAMES=(
-    "claude-sonnet-4-5" "son4.5"
-    "claude-opus-4-5" "opus4.5"
-    "gpt-5.1" "gpt5.1"
-    "gpt-5.1-codex" "cdx5.1"
-    "gemini-2.5-pro" "gem2.5"
-  )
-fi
-
 typeset -g SHAI_MODEL_INDEX=${SHAI_MODEL_INDEX:-1}              # Current model (1-indexed)
 typeset -g SHAI_MODEL_STATE_FILE="$HOME/.config/shai/model_choice"  # Persist model choice
 
@@ -71,7 +72,7 @@ shai-load-model-state() {
   [[ -f $SHAI_MODEL_STATE_FILE ]] || return
   local saved_index=$(<"$SHAI_MODEL_STATE_FILE")
   # Validate: must be a number within range
-  if [[ $saved_index =~ ^[0-9]+$ ]] && (( saved_index >= 1 && saved_index <= ${#SHAI_MODEL_CHOICES[@]} )); then
+  if [[ $saved_index =~ ^[0-9]+$ ]] && (( saved_index >= 1 && saved_index <= ${#SHAI_MODELS[@]} )); then
     SHAI_MODEL_INDEX=$saved_index
   fi
 }
@@ -101,9 +102,7 @@ setopt PROMPT_SUBST  # Enable prompt substitution
 # -----------------------------------------------------------------------------
 shai-update-prompt() {
   if [[ $SHAI_MODE == ai ]]; then
-    local entry=${SHAI_MODEL_CHOICES[$SHAI_MODEL_INDEX]}
-    local model=${entry#*:}  # Extract model ID (after the colon)
-    local short_name=${SHAI_MODEL_SHORT_NAMES[$model]:-$model}
+    local short_name=$(shai-get-shortname $SHAI_MODEL_INDEX)
     PROMPT="%F{yellow}★ ${short_name}%f %1~ %# "
   else
     PROMPT='%F{green}➜%f %1~ %# '
@@ -298,7 +297,7 @@ zle -N shai-mode  # Register as ZLE widget
 shai-model-next() {
   if [[ $SHAI_MODE == ai ]]; then
     # Cycle to next model (wraps around)
-    SHAI_MODEL_INDEX=$(( (SHAI_MODEL_INDEX % ${#SHAI_MODEL_CHOICES[@]}) + 1 ))
+    SHAI_MODEL_INDEX=$(( (SHAI_MODEL_INDEX % ${#SHAI_MODELS[@]}) + 1 ))
     shai-save-model-state
     shai-update-prompt
     # Clear session when changing models (different context)
@@ -319,7 +318,7 @@ shai-model-prev() {
   if [[ $SHAI_MODE == ai ]]; then
     # Cycle to previous model (wraps around)
     SHAI_MODEL_INDEX=$(( SHAI_MODEL_INDEX - 1 ))
-    (( SHAI_MODEL_INDEX < 1 )) && SHAI_MODEL_INDEX=${#SHAI_MODEL_CHOICES[@]}
+    (( SHAI_MODEL_INDEX < 1 )) && SHAI_MODEL_INDEX=${#SHAI_MODELS[@]}
     shai-save-model-state
     shai-update-prompt
     # Clear session when changing models
@@ -644,10 +643,9 @@ shai-send-message() {
     echo "$SHAI_SESSION_ID" > "$SHAI_SESSION_FILE"
   fi
 
-  # Parse provider and model from the current selection
-  local entry=${SHAI_MODEL_CHOICES[$SHAI_MODEL_INDEX]}
-  local provider=${entry%%:*}  # Before the colon
-  local model=${entry#*:}      # After the colon
+  # Get provider and model from current selection
+  local provider=$(shai-get-provider $SHAI_MODEL_INDEX)
+  local model=$(shai-get-model $SHAI_MODEL_INDEX)
 
   # Build JSON payload for the API
   local tmpfile=$(mktemp -t shai.XXXXXX)

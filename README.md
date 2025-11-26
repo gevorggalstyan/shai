@@ -115,28 +115,24 @@ You can use the find command:
 
 ### Custom Models
 
-Set your preferred models before sourcing the plugin:
+Edit the `SHAI_MODELS` array at the top of `shai.plugin.zsh`:
 
 ```zsh
-# In ~/.zshrc, BEFORE sourcing shai
-typeset -ga SHAI_MODEL_CHOICES=(
-  "anthropic:claude-sonnet-4-5"
-  "anthropic:claude-opus-4-5"
-  "openai:gpt-5.1"
-  "openai:gpt-5.1-codex"
-  "google:gemini-2.5-pro"
+# Format: "provider:model-id:shortname"
+typeset -ga SHAI_MODELS=(
+  "anthropic:claude-sonnet-4-5:son4.5"
+  "anthropic:claude-opus-4-5:opus4.5"
+  "openai:gpt-5.1:gpt5.1"
+  "openai:gpt-5.1-codex:cdx5.1"
+  "google:gemini-2.5-pro:gem2.5"
 )
-
-typeset -gA SHAI_MODEL_SHORT_NAMES=(
-  "claude-sonnet-4-5" "son4.5"
-  "claude-opus-4-5" "opus4.5"
-  "gpt-5.1" "gpt5.1"
-  "gpt-5.1-codex" "cdx5.1"
-  "gemini-2.5-pro" "gem2.5"
-)
-
-source ~/.zsh/shai/shai.plugin.zsh
 ```
+
+- **provider**: `anthropic`, `openai`, `google`, etc.
+- **model-id**: the model identifier for that provider
+- **shortname**: displayed in your prompt (e.g., `★ son4.5 ~ %`) — can be anything you like
+
+Browse available models at [models.dev](https://models.dev). Models must also be supported by [OpenCode](https://github.com/opencode-ai/opencode).
 
 ### Environment Variables
 
