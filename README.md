@@ -6,6 +6,7 @@
   ███████║██║  ██║██║  ██║██║
   ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝
      ★ Shell AI Assistant ★
+           v1.0.0
 ```
 
 # SHAI - Shell AI
@@ -121,14 +122,18 @@ Edit the `SHAI_MODELS` array at the top of `shai.plugin.zsh`:
 # Format: "provider:model-id:shortname"
 typeset -ga SHAI_MODELS=(
   "anthropic:claude-sonnet-4-5:son4.5"
-  "anthropic:claude-opus-4-5:opus4.5"
-  "openai:gpt-5.1:gpt5.1"
+  "anthropic:claude-opus-4-5:ops4.5"
+  "openai:gpt-5.2:gpt5.2"
+  "openai:gpt-5-pro:gpt5.2pro"
   "openai:gpt-5.1-codex:cdx5.1"
-  "google:gemini-2.5-pro:gem2.5"
+  "google:gemini-3-pro-preview:gem3p"
+  "google:gemini-3-flash-preview:gem3f"
+  "opencode:big-pickle:glm4.6"
+  "opencode:grok-code:grk1f"
 )
 ```
 
-- **provider**: `anthropic`, `openai`, `google`, etc.
+- **provider**: `anthropic`, `openai`, `google`, `opencode`, etc.
 - **model-id**: the model identifier for that provider
 - **shortname**: displayed in your prompt (e.g., `★ son4.5 ~ %`) — can be anything you like
 
