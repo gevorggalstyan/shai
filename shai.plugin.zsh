@@ -2,6 +2,7 @@
 # A ZSH plugin for AI-powered terminal assistance
 # https://github.com/gevorggalstyan/shai
 #
+# Version: 1.0.0
 # MIT License - Copyright (c) 2024
 # See LICENSE file for full license text
 #
@@ -29,10 +30,14 @@
 
 typeset -ga SHAI_MODELS=(
   "anthropic:claude-sonnet-4-5:son4.5"
-  "anthropic:claude-opus-4-5:opus4.5"
-  "openai:gpt-5.1:gpt5.1"
+  "anthropic:claude-opus-4-5:ops4.5"
+  "openai:gpt-5.2:gpt5.2"
+  "openai:gpt-5-pro:gpt5.2pro"
   "openai:gpt-5.1-codex:cdx5.1"
-  "google:gemini-2.5-pro:gem2.5"
+  "google:gemini-3-pro-preview:gem3p"
+  "google:gemini-3-flash-preview:gem3f"
+  "opencode:big-pickle:glm4.6"
+  "opencode:grok-code:grk1f"
 )
 
 # =============================================================================
